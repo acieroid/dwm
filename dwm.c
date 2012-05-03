@@ -36,7 +36,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
 #include <X11/Xutil.h>
-#include <X11/Xutil.h>
+#include <X11/Xft/Xft.h>
 #include <pango/pango.h>
 #include <pango/pangoxft.h>
 #include <pango/pango-font.h>
@@ -836,9 +836,7 @@ drawtext(const char *text, unsigned long col[ColLast], Bool invert) {
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
 	pango_layout_set_text(dc.plo, text, len);
-	pango_xft_render_layout(dc.xftdrawable,
-		(col == dc.norm ? dc.xftnorm : dc.xftsel) + (invert ? ColBG : ColFG),
-		dc.plo, x * PANGO_SCALE, y * PANGO_SCALE);
+	pango_xft_render_layout(dc.xftdrawable, (col == dc.norm ? dc.xftnorm : dc.xftsel) + (invert ? ColBG : ColFG), dc.plo, x * PANGO_SCALE, y * PANGO_SCALE);
 }
 
 void
@@ -1008,7 +1006,7 @@ gettextprop(Window w, Atom atom, char *text, unsigned int size) {
 	if(name.encoding == XA_STRING)
 		strncpy(text, (char *)name.value, size - 1);
 	else {
-		if(Xutf8TextPropertyToTextList(dpy, &name, &list, &n) >= Success && n > 0 && *list) {
+		if(XmbTextPropertyToTextList(dpy, &name, &list, &n) >= Success && n > 0 && *list) {
 			strncpy(text, *list, size - 1);
 			XFreeStringList(list);
 		}
